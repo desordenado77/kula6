@@ -17,10 +17,14 @@
 #define MIDI_CHANNEL_CHANGE 0xD0 // Channel change
 #define MIDI_SYSTEM_COMMAND 0xF0 // System commands
 
+
 typedef struct {
     char note;
     char velocity;
 } voice_data_t;
+
+extern volatile short pitch_bend;
+extern volatile voice_data_t voices[];
 
 int MIDI_sysex_stdout(char c, FILE *stream);
 

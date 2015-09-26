@@ -224,6 +224,12 @@ static void set_midi_note(char note, char velocity){
     }
 }
 
+void set_pitch_bend(char byte1, char byte2) {
+    pitch_bend = ((byte2<<7)|byte1)-8191;
+}
+
+
+
 void MIDI_init() {
     int j;
 
@@ -254,7 +260,9 @@ static void process_midi(char * data, char size) {
         case MIDI_NOTE_OFF:
             set_midi_note(data[1], 0);
             break;
-
+        case MIDI_PITCH_BEND:
+            set_pitch_bend(data[1], data[2]);
+            break;
         }
     }
 }

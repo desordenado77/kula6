@@ -1,15 +1,10 @@
-/*  UART implementation using the ATMEL ATMega32 MCU
-    By - Nandan Banerjee (08/CSE/15)
-         NIT Durgapur
-         16/06/2010
-*/
-
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include "midi.h"
 #include "led.h"
+#include "dco.h"
 
 unsigned char data[256];
 int readPtr = 0;
@@ -63,13 +58,39 @@ ISR(USART_RXC_vect)
 }
 
 
+ISR(TIMER1_COMPA_vect)
+{
+    char i;
+    char voices_out;
+    char noise_out = 0;
+    for(i=0;i<VOICES;i++){
+        voices_out |= DCO_calculate(i);
+        voices_out<<=1;
+    }
+    if(noise_out) {
+        voices_out |= NOISE_calculate();
+        voices_out<<=1;
+        noise_out^=1;
+    }
+
+    PORTB = noise_out;
+
+}
+
 int main(void)
 {
-//    midi_data m_data;
-//    init_queue(&midi_q);
+    //Setup the I/O for the LED
+    DDRC |= (1<<0);     //Set PortC Pin0 as an output
+    PORTC |= (1<<0);        //Set PortC Pin0 high to turn on LED
+    DDRB = 0xff; // Set PortB as output
 
     adc_init();
     MIDI_init();
+
+
+    TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
+    TIMSK |= (1 << OCIE1A); // Enable CTC interrupt
+
 
     //Setup the clock
     cli();            //Disable global interrupts
@@ -80,17 +101,19 @@ int main(void)
 
     printf("Hello World\n");
 
-    //Setup the I/O for the LED
+/*
+        _delay_ms(500);
+        PORTC ^= (1<<0);
+        _delay_ms(500);
+        PORTC ^= (1<<0);
+        _delay_ms(500);
+        PORTC ^= (1<<0);
+*/
+   OCR1A   = 2; // Set CTC compare value to 83333.33Hz with 16MHz AVR clock, with a prescaler of 1024
 
-    DDRC |= (1<<0);     //Set PortC Pin0 as an output
-    PORTC |= (1<<0);        //Set PortC Pin0 high to turn on LED
+   TCCR1B |= ((1 << CS10) | (1 << CS12)); // Start timer at Fcpu/1024
 
-        _delay_ms(500);
-        PORTC ^= (1<<0);
-        _delay_ms(500);
-        PORTC ^= (1<<0);
-        _delay_ms(500);
-        PORTC ^= (1<<0);
+
     int i = 0;
     while(1) {
         i++;

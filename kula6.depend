@@ -700,3 +700,32 @@
 
 1441657505 /home/juno6pm/projects/kula6/avrCode/kula6/led.h
 
+1443213956 source:/home/juno6pm/projects/kula6/kula6/dco.c
+	"dco.h"
+	"midi.h"
+
+1443212258 source:/home/juno6pm/projects/kula6/kula6/main.c
+	<avr/io.h>
+	<util/delay.h>
+	<avr/interrupt.h>
+	<stdio.h>
+	"midi.h"
+	"led.h"
+	"dco.h"
+
+1443213980 /home/juno6pm/projects/kula6/kula6/midi.h
+	<stdio.h>
+
+1442954906 /home/juno6pm/projects/kula6/kula6/led.h
+
+1443209665 source:/home/juno6pm/projects/kula6/kula6/midi.c
+	<avr/io.h>
+	"midi.h"
+
+1443211077 /home/juno6pm/projects/kula6/kula6/dco.h
+
+1443214066 source:/home/juno6pm/projects/kula6/kula6/noise.c
+	"noise.h"
+
+1443211551 /home/juno6pm/projects/kula6/kula6/noise.h
+
